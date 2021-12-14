@@ -1,9 +1,3 @@
-# Sorting
-_Multisotring any structures_
-
-example:
-
-```
 package main
 
 import (
@@ -41,8 +35,3 @@ func main() {
 	}
 	fmt.Println(string(marshalled))
 }
-```
-
-```
-[{"Artist":"Amaranthe","Name":"Manifest","Year":2020},{"Artist":"Nightwish","Name":"Oceanborn","Year":1998},{"Artist":"Nightwish","Name":"Wishmaster","Year":2000},{"Artist":"Turmion Kätilöt","Name":"Technodiktator","Year":2013},{"Artist":"Turmion Kätilöt","Name":"Diskovibrator","Year":2015},{"Artist":"Turmion Kätilöt","Name":"Global Warning","Year":2020}]
-```

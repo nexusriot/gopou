@@ -14,8 +14,8 @@ type Sorter struct {
 	less  []lessFunc
 }
 
-// SortCriteria is a criteria tp perform sorting includes field name and sorting order.
-type SortCriteria struct {
+// Criteria is a criteria tp perform sorting includes field name and sorting order.
+type Criteria struct {
 	FieldName string
 	Ascending bool
 }
@@ -90,7 +90,7 @@ func getComparator(fieldName string, ascending bool) func(c1, c2 interface{}) bo
 	}
 }
 
-func Sorted(criteria []*SortCriteria, items interface{}) ([]Sortable, error) {
+func Sorted(criteria []*Criteria, items interface{}) ([]Sortable, error) {
 	var lessFuncs []lessFunc
 	for _, v := range criteria {
 		lessFuncs = append(lessFuncs, getComparator(v.FieldName, v.Ascending))

@@ -44,7 +44,7 @@ func (s *SorterTestSuite) TestSorted() {
 		return result
 	}
 
-	criteria := []*SortCriteria{
+	criteria := []*Criteria{
 		{"Year", false},
 		{"Artist", true},
 	}
@@ -56,7 +56,7 @@ func (s *SorterTestSuite) TestSorted() {
 	s.Require().Equal(expectedYears, albumYears)
 	s.Require().Equal(expectedArtists, albumArtists)
 
-	criteria = []*SortCriteria{
+	criteria = []*Criteria{
 		{"Artist", true},
 		{"Year", true},
 	}
