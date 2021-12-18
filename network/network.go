@@ -1,6 +1,7 @@
 package network
 
 import (
+	"fmt"
 	"net"
 )
 
@@ -21,4 +22,28 @@ func NextIP(ip net.IP, increment uint) net.IP {
 	i4 := ip.To4()
 	vb := uint(i4[0])<<24 + uint(i4[1])<<16 + uint(i4[2])<<8 + uint(i4[3]) + increment
 	return net.IPv4(byte((vb>>24)&0xFF), byte((vb>>16)&0xFF), byte((vb>>8)&0xFF), byte(vb&0xFF))
+}
+
+func IsNetworkPrivate(networkAddr string) (bool, error) {
+	var privateNetworks []*net.IPNet
+
+	privateRanges := []string{
+		"192.168.0.0/16",
+		"172.16.0.0/12",
+		"10.0.0.0/8",
+	}
+	for _, a := range privateRanges {
+		_, addr, _ := net.ParseCIDR(a)
+		privateNetworks = append(privateNetworks, addr)
+	}
+	_, addr, err := net.ParseCIDR(networkAddr)
+	if err != nil {
+		return false, fmt.Errorf("can not parse %s as network address", networkAddr)
+	}
+	for _, privateNet := range privateNetworks {
+		if IsPartOf(addr, privateNet) {
+			return true, nil
+		}
+	}
+	return false, nil
 }
