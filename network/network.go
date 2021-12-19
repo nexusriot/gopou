@@ -24,15 +24,25 @@ func NextIP(ip net.IP, increment uint) net.IP {
 	return net.IPv4(byte((vb>>24)&0xFF), byte((vb>>16)&0xFF), byte((vb>>8)&0xFF), byte(vb&0xFF))
 }
 
-func IsNetworkPrivate(networkAddr string) (bool, error) {
-	var privateNetworks []*net.IPNet
-
-	privateRanges := []string{
+// getPrivateRanges gets slice of private ranges in the string format
+func getPrivateRanges() []string {
+	return []string{
+		"127.0.0.0/8",
 		"192.168.0.0/16",
 		"172.16.0.0/12",
 		"10.0.0.0/8",
+		"169.254.0.0/16", // RFC3927
+		"::1/128",        // IPv6 lo
+		"fe80::/10",      // IPv6 link local
+		"fc00::/7",
 	}
-	for _, a := range privateRanges {
+}
+
+// IsNetworkPrivate gets is networkAddr in private address range
+func IsNetworkPrivate(networkAddr string) (bool, error) {
+	var privateNetworks []*net.IPNet
+
+	for _, a := range getPrivateRanges() {
 		_, addr, _ := net.ParseCIDR(a)
 		privateNetworks = append(privateNetworks, addr)
 	}
