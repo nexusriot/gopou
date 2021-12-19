@@ -38,22 +38,40 @@ func getPrivateRanges() []string {
 	}
 }
 
-// IsNetworkPrivate gets is networkAddr in private address range
-func IsNetworkPrivate(networkAddr string) (bool, error) {
+func getPrivateNetworks() []*net.IPNet {
 	var privateNetworks []*net.IPNet
 
 	for _, a := range getPrivateRanges() {
 		_, addr, _ := net.ParseCIDR(a)
 		privateNetworks = append(privateNetworks, addr)
 	}
+	return privateNetworks
+}
+
+// IsPrivateNetwork gets is networkAddr in private address range
+func IsPrivateNetwork(networkAddr string) (bool, error) {
+
 	_, addr, err := net.ParseCIDR(networkAddr)
 	if err != nil {
 		return false, fmt.Errorf("can not parse %s as network address", networkAddr)
 	}
-	for _, privateNet := range privateNetworks {
+	for _, privateNet := range getPrivateNetworks() {
 		if IsPartOf(addr, privateNet) {
 			return true, nil
 		}
 	}
 	return false, nil
+}
+
+// IsPrivateIP gets is given net.IP private
+func IsPrivateIP(ip net.IP) bool {
+	if ip.IsLinkLocalUnicast() || ip.IsLinkLocalMulticast() || ip.IsLoopback() {
+		return true
+	}
+	for _, block := range getPrivateNetworks() {
+		if block.Contains(ip) {
+			return true
+		}
+	}
+	return false
 }

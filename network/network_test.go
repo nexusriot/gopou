@@ -90,13 +90,34 @@ func (n *NetworkTestSuite) TestIsNetworkPrivate() {
 		{"256.1.2.3/32", false, true},
 	}
 	for _, t := range testCases {
-		res, err := IsNetworkPrivate(t.netAddr)
+		res, err := IsPrivateNetwork(t.netAddr)
 		n.Require().Equal(t.result, res)
 		if !t.err {
 			n.Require().Nil(err)
 		} else {
 			n.Require().NotNil(err)
 		}
+	}
+}
+
+func (n *NetworkTestSuite) TestIsPrivateIP() {
+
+	testCases := []struct {
+		ip     string
+		result bool
+	}{
+		{"127.0.0.2", true},
+		{"10.0.1.200", true},
+		{"169.254.1.12", true},
+		{"192.168.100.22", true},
+		{"172.22.1.10", true},
+		{"5.167.122.112", false},
+		{"212.22.21.3", false},
+	}
+	for _, t := range testCases {
+		ip := net.ParseIP(t.ip)
+		res := IsPrivateIP(ip)
+		n.Require().Equal(t.result, res)
 	}
 }
 
