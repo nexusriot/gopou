@@ -121,6 +121,28 @@ func (n *NetworkTestSuite) TestIsPrivateIP() {
 	}
 }
 
+func (n *NetworkTestSuite) TestHosts() {
+
+	testCases := []struct {
+		cidr   string
+		result []string
+		err    bool
+	}{
+		{"10.0.0.1/32", []string{"10.0.0.1"}, false},
+		{"192.168.0.0/30", []string{"192.168.0.0", "192.168.0.1", "192.168.0.2", "192.168.0.3"}, false},
+		{"256.55.4.1/32", nil, true},
+	}
+	for _, t := range testCases {
+		res, err := Hosts(t.cidr)
+		if !t.err {
+			n.Require().Nil(err)
+		} else {
+			n.Require().NotNil(err)
+		}
+		n.Require().Equal(t.result, res)
+	}
+}
+
 func TestNetworkTestSuite(t *testing.T) {
 	suite.Run(t, new(NetworkTestSuite))
 }

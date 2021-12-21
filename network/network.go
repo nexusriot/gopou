@@ -75,3 +75,24 @@ func IsPrivateIP(ip net.IP) bool {
 	}
 	return false
 }
+
+// Hosts gets slice of hosts with str format by cidr in string format
+func Hosts(cidr string) ([]string, error) {
+	var ips []string
+	ip, network, err := net.ParseCIDR(cidr)
+	if err != nil {
+		return nil, err
+	}
+	increment := func(ip net.IP) {
+		for j := len(ip) - 1; j >= 0; j-- {
+			ip[j]++
+			if ip[j] > 0 {
+				break
+			}
+		}
+	}
+	for ip := ip.Mask(network.Mask); network.Contains(ip); increment(ip) {
+		ips = append(ips, ip.String())
+	}
+	return ips, nil
+}
